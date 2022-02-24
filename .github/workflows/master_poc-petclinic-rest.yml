@@ -49,6 +49,5 @@ jobs:
         with:
           app-name: 'poc-petclinic-rest1'
           slot-name: 'Production'
-          #publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_52FB787F1C444F40B8769AB6454CB56C }}
           publish-profile: ${{ secrets.AZURE_CREDENTIALS }}
           package: '*.jar'
