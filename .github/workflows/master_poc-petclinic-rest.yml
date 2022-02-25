@@ -1,60 +1,44 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy JAR app to Azure Web App - poc-petclinic-rest1
-
+name: Build case-api using reusable component workflow run
 on:
-  push:
-    branches:
-      - develop
   workflow_dispatch:
-
+  push:
+    paths:
+    - ".github/workflows/build-deploy-backend.yml" 
+    branches:
+    - feature/buildworkflows
+    
+env:
+  AZURE_WEBAPP_NAME: master_poc-petclinic-rest.yml
+  AZURE_WEBAPP_SLOT: production
+   
 jobs:
   build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Java version
-        uses: actions/setup-java@v1
-        with:
-          java-version: '11'
-
-      - name: Build with Maven
-        run: mvn clean install
-
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v2
-        with:
-          name: java-app
-          path: '${{ github.workspace }}/target/*.jar'
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    
-    steps:
-      - uses: actions/checkout@v2    
+    runs-on: [latest]
+    steps: 
+    - uses: actions/checkout@v2
       
+    - name: Running reusable build backend composite action 
+      uses:  ./.github/actions/build
+      with:
+        APP_MODULE: "poc-petclinic-rest1"
+        JAVA_VERSION: "11"
+        ARTIFACT_NAME: "app"
+        
+  deploy:
+    name: "Deploy Backend 🚀"  
+    runs-on: [latest]
+    needs: [build]      
+    steps:
+      - uses: actions/checkout@v2      
       - name: Azure Login     
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}   
-          
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v2
+          creds: ${{ secrets.AZURE_CREDENTIALS }}    
+     
+      - name: Running reusable deploy backend composite action
+        uses:  ./.github/actions/deploy
         with:
-          name: java-app
-
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: 'poc-petclinic-rest1'
-          slot-name: 'Production'
-          package: '${{ github.workspace }}/'
-          
+          ARTIFACT_NAME: "app"
+          AZURE_WEBAPP_NAME: ${{ env.AZURE_WEBAPP_NAME }}  
+          AZURE_WEBAPP_SLOT: ${{ env.AZURE_WEBAPP_SLOT }}
+          AZURE_WEBAPP_PACKAGE_PATH: ${{github.workspace }}
