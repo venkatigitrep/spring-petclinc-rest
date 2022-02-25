@@ -1,14 +1,14 @@
-name: Build case-api using reusable component workflow run
+name: Build petclinic rest using reusable component workflow run
 on:
   workflow_dispatch:
   push:
     paths:
-    - ".github/workflows/build-deploy-backend.yml" 
+    - ".github/workflows/master_poc-petclinic-rest.yml" 
     branches:
-    - feature/buildworkflows
+    - develop
     
 env:
-  AZURE_WEBAPP_NAME: master_poc-petclinic-rest.yml
+  AZURE_WEBAPP_NAME: poc-petclinic-rest1
   AZURE_WEBAPP_SLOT: production
    
 jobs:
