@@ -28,7 +28,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: java-app
-          path: '${{ github.workspace }}/target/petclinic.jar'
+          path: '${{ github.workspace }}/target/*.jar'
 
   deploy:
     runs-on: ubuntu-latest
@@ -56,4 +56,4 @@ jobs:
         with:
           app-name: 'poc-petclinic-rest1'
           slot-name: 'Production'
-          package: '*.jar'
+          package: '${{ github.workspace }}/target/*.jar'
