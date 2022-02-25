@@ -45,9 +45,8 @@ jobs:
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
+        uses: azure/login@v1
         with:
-          login: azure/login@v1
           app-name: 'poc-petclinic-rest1'
           slot-name: 'Production'
           credentials: ${{ secrets.AZURE_CREDENTIALS }}
