@@ -45,9 +45,9 @@ jobs:
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
-        uses: azure/login@v1
+        uses: azure/webapps-deploy@v2
         with:
           app-name: 'poc-petclinic-rest1'
           slot-name: 'Production'
-          credentials: ${{ secrets.AZURE_CREDENTIALS }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_52FB787F1C444F40B8769AB6454CB56C }}
           package: '*.jar'
